@@ -198,7 +198,7 @@ func (sb *RawBucket) HandleSpan(s *WeightedSpan, env string, aggregators []strin
 
 	for _, agg := range aggregators {
 		if agg != "env" && agg != "resource" && agg != "service" {
-			if v, ok := s.Meta[agg]; ok {
+			if v, ok := s.Meta[agg]; ok && v != "" {
 				m[agg] = v
 			}
 		}

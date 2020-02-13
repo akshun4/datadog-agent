@@ -29,11 +29,39 @@ func TestGrainWithExtraTags(t *testing.T) {
 	srb := NewRawBucket(0, 1e9)
 	assert := assert.New(t)
 
-	s := pb.Span{Service: "thing", Name: "other", Resource: "yo", Meta: map[string]string{"meta2": "two", "meta1": "ONE"}}
+	s := pb.Span{Service: "thing", Name: "other", Resource: "yo", Meta: map[string]string{"meta2": "two", "meta1": "ONE", "version": "1.0.0"}}
 	aggr, tgs := assembleGrain(&srb.keyBuf, "default", s.Resource, s.Service, s.Meta)
 
-	assert.Equal("env:default,resource:yo,service:thing,meta1:ONE,meta2:two", aggr)
-	assert.Equal(TagSet{Tag{"env", "default"}, Tag{"resource", "yo"}, Tag{"service", "thing"}, Tag{"meta1", "ONE"}, Tag{"meta2", "two"}}, tgs)
+	assert.Equal("env:default,resource:yo,service:thing,meta1:ONE,meta2:two,version:1.0.0", aggr)
+	assert.Equal(TagSet{Tag{"env", "default"}, Tag{"resource", "yo"}, Tag{"service", "thing"}, Tag{"meta1", "ONE"}, Tag{"meta2", "two"}, Tag{"version", "1.0.0"}}, tgs)
+}
+
+func TestHandleSpanEmptyMetaTags(t *testing.T) {
+	srb := NewRawBucket(0, 1e9)
+	assert := assert.New(t)
+	s := testSpan(1, 0, 100, 0, "myservice", "myresource", 0)
+	s.Meta = map[string]string{"version": ""}
+	trace := pb.Trace{
+		s,
+	}
+	traceutil.ComputeTopLevel(trace)
+	wt := NewWeightedTrace(trace, traceutil.GetRoot(trace))
+	srb.HandleSpan(wt[0], "dev", []string{"version"}, nil)
+	b := srb.Export()
+	// One count of each: hits, duration, errors.
+	assert.Equal(3, len(b.Counts))
+	for _, c := range b.Counts {
+		if c.Measure == "hits" {
+			assert.Equal("query|hits|env:dev,resource:myresource,service:myservice", c.Key)
+		}
+		if c.Measure == "duration" {
+			assert.Equal("query|duration|env:dev,resource:myresource,service:myservice", c.Key)
+		}
+		if c.Measure == "errors" {
+			assert.Equal("query|errors|env:dev,resource:myresource,service:myservice", c.Key)
+		}
+		assert.Equal(c.TagSet, TagSet{Tag{"env", "dev"}, Tag{"resource", "myresource"}, Tag{"service", "myservice"}})
+	}
 }
 
 func BenchmarkHandleSpanRandom(b *testing.B) {
