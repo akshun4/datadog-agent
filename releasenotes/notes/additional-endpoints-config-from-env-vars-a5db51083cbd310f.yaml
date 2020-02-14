@@ -2,5 +2,5 @@ enhancements:
   - |
     Add the ability to configure additional endpoints for
     both the agent and the log agent with environment
-    variables, namely DD_ADDITIONAL_ENDPOINTS amd
+    variables, namely DD_ADDITIONAL_ENDPOINTS and
     DD_LOGS_CONFIG_ADDITIONAL_ENDPOINTS.
