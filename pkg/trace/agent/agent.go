@@ -65,7 +65,6 @@ func NewAgent(ctx context.Context, conf *config.AgentConfig) *Agent {
 	out := make(chan *writer.SampledSpans, 1000)
 	statsChan := make(chan []stats.Bucket)
 
-	// Allow for `version` as an optional aggregator to be used if present.
 	return &Agent{
 		Receiver:           api.NewHTTPReceiver(conf, dynConf, in),
 		Concentrator:       stats.NewConcentrator(conf.ExtraAggregators, conf.BucketInterval.Nanoseconds(), statsChan),
