@@ -68,7 +68,7 @@ func NewAgent(ctx context.Context, conf *config.AgentConfig) *Agent {
 	// Allow for `version` as an optional aggregator to be used if present.
 	return &Agent{
 		Receiver:           api.NewHTTPReceiver(conf, dynConf, in),
-		Concentrator:       stats.NewConcentrator(append(conf.ExtraAggregators, "version"), conf.BucketInterval.Nanoseconds(), statsChan),
+		Concentrator:       stats.NewConcentrator(conf.ExtraAggregators, conf.BucketInterval.Nanoseconds(), statsChan),
 		Blacklister:        filters.NewBlacklister(conf.Ignore["resource"]),
 		Replacer:           filters.NewReplacer(conf.ReplaceTags),
 		ScoreSampler:       NewScoreSampler(conf),

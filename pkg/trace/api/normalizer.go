@@ -158,6 +158,9 @@ func normalize(ts *info.TagStats, s *pb.Span) error {
 			delete(s.Meta, "http.status_code")
 		}
 	}
+	if v, ok := s.Meta["version"]; ok {
+		s.Meta["version"] = normalizeTag(v)
+	}
 	return nil
 }
 
