@@ -74,12 +74,12 @@ else
   repo_url="datadoghq.com"
 fi
 
-if [ -n "$APM_CONFIG" ]; then
-    apm_config=$APM_CONFIG
+if [ -n "$APM_ENABLED" ]; then
+    apm_config=$APM_ENABLED
 fi
 
-if [ -n "$PROCESS_CONFIG" ]; then
-    process_config=$PROCESS_CONFIG
+if [ -n "$PROCESS_ENABLED" ]; then
+    process_config=$PROCESS_ENABLED
 fi
 
 dd_upgrade=
@@ -328,11 +328,11 @@ else
   fi
   if [ $apm_config ]; then
      printf "\033[34m\n* Adding your APM Configuration to the Agent configuration: $CONF\n\033[0m\n"
-     $sudo_cmd sh -c "sed -i 's/# apm_config:.*/apm_config:\n  enabled:$apm_config/' $CONF"
+     $sudo_cmd sh -c "sed -i 's/# apm_config:.*/apm_config:\n  enabled: false/' $CONF"
   fi
   if [ $process_config ]; then
      printf "\033[34m\n* Adding your Process Configuration to the Agent configuration: $CONF\n\033[0m\n"
-     $sudo_cmd sh -c "sed -i \"s/# process_config:.*/process_config:\n  enabled:"$process_config"/\" $CONF"
+     $sudo_cmd sh -c "sed -i 's/# process_config:.*/process_config:\n  enabled: "true"/' $CONF"
   fi
   $sudo_cmd chown dd-agent:dd-agent $CONF
   $sudo_cmd chmod 640 $CONF
