@@ -328,8 +328,7 @@ else
   fi
   if [ $apm_config ]; then
      printf "\033[34m\n* Adding your APM Configuration to the Agent configuration: $CONF\n\033[0m\n"
-     $sudo_cmd sh -c "sed -i 's/# apm_config:.*/apm_config:\
-     >   $apm_config/' $CONF"
+     $sudo_cmd sh -c "sed -i 's/# apm_config:.*/apm_config: ' | sed -i '/apm_config:/a '   $apm_config/' $CONF"
   fi
   if [ $process_config ]; then
      printf "\033[34m\n* Adding your Process Configuration to the Agent configuration: $CONF\n\033[0m\n"
