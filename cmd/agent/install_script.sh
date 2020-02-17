@@ -74,6 +74,14 @@ else
   repo_url="datadoghq.com"
 fi
 
+if [ -n "$APM_CONFIG" ]; then
+    apm_config=$APM_CONFIG
+fi
+
+if [ -n "$PROCESS_CONFIG" ]; then
+    process_config=$PROCESS_CONFIG
+fi
+
 dd_upgrade=
 if [ -n "$DD_UPGRADE" ]; then
   dd_upgrade=$DD_UPGRADE
@@ -317,6 +325,14 @@ else
       printf "\033[34m\n* Adding your HOST TAGS to the Agent configuration: $CONF\n\033[0m\n"
       formatted_host_tags="['"$( echo "$host_tags" | sed "s/,/','/g" )"']"  # format `env:prod,foo:bar` to yaml-compliant `['env:prod','foo:bar']`
       $sudo_cmd sh -c "sed -i \"s/# tags:.*/tags: "$formatted_host_tags"/\" $CONF"
+  fi
+  if [ $apm_config ]; then
+     printf "\033[34m\n* Adding your APM Configuration to the Agent configuration: $CONF\n\033[0m\n"
+     $sudo_cmd sh -c "sed -i \'s/# apm_config:.*/apm_config: "$apm_config"/\" $CONF"
+  fi
+  if [ $process_config ]; then
+     printf "\033[34m\n* Adding your Process Configuration to the Agent configuration: $CONF\n\033[0m\n"
+     $sudo_cmd sh -c "sed -i \'s/# process_config:.*/process_config: "$process_config"/\" $CONF"
   fi
   $sudo_cmd chown dd-agent:dd-agent $CONF
   $sudo_cmd chmod 640 $CONF
