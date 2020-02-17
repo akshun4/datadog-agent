@@ -328,11 +328,11 @@ else
   fi
   if [ $apm_config ]; then
      printf "\033[34m\n* Adding your APM Configuration to the Agent configuration: $CONF\n\033[0m\n"
-     $sudo_cmd sh -c "sed -i \'s/# apm_config:.*/apm_config: "$apm_config"/\" $CONF"
+     $sudo_cmd sh -c "sed -i \"s/# apm_config:.*/apm_config: "$apm_config"/\" $CONF"
   fi
   if [ $process_config ]; then
      printf "\033[34m\n* Adding your Process Configuration to the Agent configuration: $CONF\n\033[0m\n"
-     $sudo_cmd sh -c "sed -i \'s/# process_config:.*/process_config: "$process_config"/\" $CONF"
+     $sudo_cmd sh -c "sed -i \"s/# process_config:.*/process_config: "$process_config"/\" $CONF"
   fi
   $sudo_cmd chown dd-agent:dd-agent $CONF
   $sudo_cmd chmod 640 $CONF
